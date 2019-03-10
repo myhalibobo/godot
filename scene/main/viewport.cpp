@@ -884,7 +884,7 @@ void Viewport::_camera_set(Camera *p_camera) {
 	if (camera == p_camera)
 		return;
 
-	if (camera && find_world().is_valid()) {
+	if (camera) {
 		camera->notification(Camera::NOTIFICATION_LOST_CURRENT);
 	}
 	camera = p_camera;
@@ -893,7 +893,7 @@ void Viewport::_camera_set(Camera *p_camera) {
 	else
 		VisualServer::get_singleton()->viewport_attach_camera(viewport, RID());
 
-	if (camera && find_world().is_valid()) {
+	if (camera) {
 		camera->notification(Camera::NOTIFICATION_BECAME_CURRENT);
 	}
 
@@ -912,9 +912,7 @@ void Viewport::_camera_remove(Camera *p_camera) {
 
 	cameras.erase(p_camera);
 	if (camera == p_camera) {
-		if (camera && find_world().is_valid()) {
-			camera->notification(Camera::NOTIFICATION_LOST_CURRENT);
-		}
+		camera->notification(Camera::NOTIFICATION_LOST_CURRENT);
 		camera = NULL;
 	}
 }
@@ -1011,7 +1009,7 @@ void Viewport::_propagate_enter_world(Node *p_node) {
 			Viewport *v = Object::cast_to<Viewport>(p_node);
 			if (v) {
 
-				if (v->world.is_valid())
+				if (v->world.is_valid() || v->own_world.is_valid())
 					return;
 			}
 		}
@@ -1048,7 +1046,7 @@ void Viewport::_propagate_exit_world(Node *p_node) {
 			Viewport *v = Object::cast_to<Viewport>(p_node);
 			if (v) {
 
-				if (v->world.is_valid())
+				if (v->world.is_valid() || v->own_world.is_valid())
 					return;
 			}
 		}
@@ -1068,22 +1066,10 @@ void Viewport::set_world(const Ref<World> &p_world) {
 	if (is_inside_tree())
 		_propagate_exit_world(this);
 
-#ifndef _3D_DISABLED
-	if (find_world().is_valid() && camera)
-		camera->notification(Camera::NOTIFICATION_LOST_CURRENT);
-#endif
-
 	world = p_world;
 
 	if (is_inside_tree())
 		_propagate_enter_world(this);
-
-#ifndef _3D_DISABLED
-	if (find_world().is_valid() && camera)
-		camera->notification(Camera::NOTIFICATION_BECAME_CURRENT);
-#endif
-
-	//propagate exit
 
 	if (is_inside_tree()) {
 		VisualServer::get_singleton()->viewport_set_scenario(viewport, find_world()->get_scenario());
@@ -2724,11 +2710,6 @@ void Viewport::set_use_own_world(bool p_world) {
 	if (is_inside_tree())
 		_propagate_exit_world(this);
 
-#ifndef _3D_DISABLED
-	if (find_world().is_valid() && camera)
-		camera->notification(Camera::NOTIFICATION_LOST_CURRENT);
-#endif
-
 	if (!p_world)
 		own_world = Ref<World>();
 	else
@@ -2736,13 +2717,6 @@ void Viewport::set_use_own_world(bool p_world) {
 
 	if (is_inside_tree())
 		_propagate_enter_world(this);
-
-#ifndef _3D_DISABLED
-	if (find_world().is_valid() && camera)
-		camera->notification(Camera::NOTIFICATION_BECAME_CURRENT);
-#endif
-
-	//propagate exit
 
 	if (is_inside_tree()) {
 		VisualServer::get_singleton()->viewport_set_scenario(viewport, find_world()->get_scenario());
