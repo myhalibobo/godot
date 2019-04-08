@@ -2270,10 +2270,6 @@ public:
 		zipClose(final_apk, NULL);
 		unzClose(tmp_unaligned);
 
-		if (err) {
-			return err;
-		}
-
 		return OK;
 	}
 
