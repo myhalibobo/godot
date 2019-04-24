@@ -211,7 +211,6 @@ void ScriptEditorDebugger::debug_next() {
 	ppeer->put_var(msg);
 	_clear_execution();
 	stack_dump->clear();
-	inspector->edit(NULL);
 }
 void ScriptEditorDebugger::debug_step() {
 
@@ -224,7 +223,6 @@ void ScriptEditorDebugger::debug_step() {
 	ppeer->put_var(msg);
 	_clear_execution();
 	stack_dump->clear();
-	inspector->edit(NULL);
 }
 
 void ScriptEditorDebugger::debug_break() {
@@ -440,7 +438,6 @@ void ScriptEditorDebugger::_parse_message(const String &p_msg, const Array &p_da
 		emit_signal("breaked", false, false, Variant());
 		profiler->set_enabled(true);
 		profiler->disable_seeking();
-		inspector->edit(NULL);
 		EditorNode::get_singleton()->get_pause_button()->set_pressed(false);
 	} else if (p_msg == "message:click_ctrl") {
 
@@ -1354,7 +1351,7 @@ void ScriptEditorDebugger::stop() {
 	profiler->set_enabled(true);
 
 	inspect_scene_tree->clear();
-
+	inspector->edit(NULL);
 	EditorNode::get_singleton()->get_pause_button()->set_pressed(false);
 	EditorNode::get_singleton()->get_pause_button()->set_disabled(true);
 	EditorNode::get_singleton()->get_scene_tree_dock()->hide_remote_tree();
