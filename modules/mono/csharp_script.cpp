@@ -911,7 +911,7 @@ void CSharpLanguage::reload_assemblies(bool p_soft_reload) {
 }
 #endif
 
-void CSharpLanguage::project_assembly_loaded() {
+void CSharpLanguage::_load_scripts_metadata() {
 
 	scripts_metadata.clear();
 
@@ -945,6 +945,7 @@ void CSharpLanguage::project_assembly_loaded() {
 		}
 
 		scripts_metadata = old_dict_var.operator Dictionary();
+		scripts_metadata_invalidated = false;
 
 		print_verbose("Successfully loaded scripts metadata");
 	} else {
@@ -1016,11 +1017,13 @@ bool CSharpLanguage::debug_break(const String &p_error, bool p_allow_continue) {
 	}
 }
 
-void CSharpLanguage::_uninitialize_script_bindings() {
+void CSharpLanguage::_on_scripts_domain_unloaded() {
 	for (Map<Object *, CSharpScriptBinding>::Element *E = script_bindings.front(); E; E = E->next()) {
 		CSharpScriptBinding &script_binding = E->value();
 		script_binding.inited = false;
 	}
+
+	scripts_metadata_invalidated = true;
 }
 
 void CSharpLanguage::set_language_index(int p_idx) {
@@ -1078,6 +1081,8 @@ CSharpLanguage::CSharpLanguage() {
 #endif
 
 	lang_idx = -1;
+
+	scripts_metadata_invalidated = true;
 }
 
 CSharpLanguage::~CSharpLanguage() {
