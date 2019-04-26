@@ -1062,6 +1062,10 @@ Variant Object::get_meta(const String &p_name) const {
 	return metadata[p_name];
 }
 
+void Object::remove_meta(const String &p_name) {
+	metadata.erase(p_name);
+}
+
 Array Object::_get_property_list_bind() const {
 
 	List<PropertyInfo> lpi;
@@ -1694,6 +1698,7 @@ void Object::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_script"), &Object::get_script);
 
 	ClassDB::bind_method(D_METHOD("set_meta", "name", "value"), &Object::set_meta);
+	ClassDB::bind_method(D_METHOD("remove_meta", "name"), &Object::remove_meta);
 	ClassDB::bind_method(D_METHOD("get_meta", "name"), &Object::get_meta);
 	ClassDB::bind_method(D_METHOD("has_meta", "name"), &Object::has_meta);
 	ClassDB::bind_method(D_METHOD("get_meta_list"), &Object::_get_meta_list_bind);

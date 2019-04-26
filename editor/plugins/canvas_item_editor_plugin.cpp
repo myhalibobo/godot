@@ -3920,6 +3920,8 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 			viewport->update();
 		} break;
 		case LOCK_SELECTED: {
+			undo_redo->create_action(TTR("Lock Selected"));
+
 			List<Node *> selection = editor_selection->get_selected_node_list();
 			for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
 				CanvasItem *canvas_item = Object::cast_to<CanvasItem>(E->get());
@@ -3928,12 +3930,18 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				if (canvas_item->get_viewport() != EditorNode::get_singleton()->get_scene_root())
 					continue;
 
-				canvas_item->set_meta("_edit_lock_", true);
-				emit_signal("item_lock_status_changed");
+				undo_redo->add_do_method(canvas_item, "set_meta", "_edit_lock_", true);
+				undo_redo->add_undo_method(canvas_item, "remove_meta", "_edit_lock_");
+				undo_redo->add_do_method(this, "emit_signal", "item_lock_status_changed");
+				undo_redo->add_undo_method(this, "emit_signal", "item_lock_status_changed");
 			}
-			viewport->update();
+			undo_redo->add_do_method(viewport, "update", Variant());
+			undo_redo->add_undo_method(viewport, "update", Variant());
+			undo_redo->commit_action();
 		} break;
 		case UNLOCK_SELECTED: {
+			undo_redo->create_action(TTR("Unlock Selected"));
+
 			List<Node *> selection = editor_selection->get_selected_node_list();
 			for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
 				CanvasItem *canvas_item = Object::cast_to<CanvasItem>(E->get());
@@ -3942,12 +3950,18 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				if (canvas_item->get_viewport() != EditorNode::get_singleton()->get_scene_root())
 					continue;
 
-				canvas_item->set_meta("_edit_lock_", Variant());
-				emit_signal("item_lock_status_changed");
+				undo_redo->add_do_method(canvas_item, "remove_meta", "_edit_lock_");
+				undo_redo->add_undo_method(canvas_item, "set_meta", "_edit_lock_", true);
+				undo_redo->add_do_method(this, "emit_signal", "item_lock_status_changed");
+				undo_redo->add_undo_method(this, "emit_signal", "item_lock_status_changed");
 			}
-			viewport->update();
+			undo_redo->add_do_method(viewport, "update", Variant());
+			undo_redo->add_undo_method(viewport, "update", Variant());
+			undo_redo->commit_action();
 		} break;
 		case GROUP_SELECTED: {
+			undo_redo->create_action(TTR("Group Selected"));
+
 			List<Node *> selection = editor_selection->get_selected_node_list();
 			for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
 				CanvasItem *canvas_item = Object::cast_to<CanvasItem>(E->get());
@@ -3956,12 +3970,18 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				if (canvas_item->get_viewport() != EditorNode::get_singleton()->get_scene_root())
 					continue;
 
-				canvas_item->set_meta("_edit_group_", true);
-				emit_signal("item_group_status_changed");
+				undo_redo->add_do_method(canvas_item, "set_meta", "_edit_group_", true);
+				undo_redo->add_undo_method(canvas_item, "remove_meta", "_edit_group_");
+				undo_redo->add_do_method(this, "emit_signal", "item_group_status_changed");
+				undo_redo->add_undo_method(this, "emit_signal", "item_group_status_changed");
 			}
-			viewport->update();
+			undo_redo->add_do_method(viewport, "update", Variant());
+			undo_redo->add_undo_method(viewport, "update", Variant());
+			undo_redo->commit_action();
 		} break;
 		case UNGROUP_SELECTED: {
+			undo_redo->create_action(TTR("Ungroup Selected"));
+
 			List<Node *> selection = editor_selection->get_selected_node_list();
 			for (List<Node *>::Element *E = selection.front(); E; E = E->next()) {
 				CanvasItem *canvas_item = Object::cast_to<CanvasItem>(E->get());
@@ -3970,10 +3990,14 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 				if (canvas_item->get_viewport() != EditorNode::get_singleton()->get_scene_root())
 					continue;
 
-				canvas_item->set_meta("_edit_group_", Variant());
-				emit_signal("item_group_status_changed");
+				undo_redo->add_do_method(canvas_item, "remove_meta", "_edit_group_");
+				undo_redo->add_undo_method(canvas_item, "set_meta", "_edit_group_", true);
+				undo_redo->add_do_method(this, "emit_signal", "item_group_status_changed");
+				undo_redo->add_undo_method(this, "emit_signal", "item_group_status_changed");
 			}
-			viewport->update();
+			undo_redo->add_do_method(viewport, "update", Variant());
+			undo_redo->add_undo_method(viewport, "update", Variant());
+			undo_redo->commit_action();
 		} break;
 		case ANCHORS_AND_MARGINS_PRESET_TOP_LEFT: {
 			_set_anchors_and_margins_preset(PRESET_TOP_LEFT);
