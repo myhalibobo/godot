@@ -107,6 +107,7 @@ class TileMapEditor : public VBoxContainer {
 	CheckBox *priority_button;
 
 	Tool tool;
+	Tool last_tool;
 
 	bool selection_active;
 	bool mouse_over;
