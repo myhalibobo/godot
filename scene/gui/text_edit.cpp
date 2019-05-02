@@ -2280,6 +2280,30 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 			k->set_command(true);
 			k->set_shift(false);
 		}
+#ifdef APPLE_STYLE_KEYS
+		if (k->get_control() && !k->get_shift() && !k->get_alt() && !k->get_command()) {
+			uint32_t move_cursor_key = KEY_UNKNOWN;
+			switch (k->get_scancode()) {
+				case KEY_F: {
+					move_cursor_key = KEY_RIGHT;
+				} break;
+				case KEY_B: {
+					move_cursor_key = KEY_LEFT;
+				} break;
+				case KEY_P: {
+					move_cursor_key = KEY_UP;
+				} break;
+				case KEY_N: {
+					move_cursor_key = KEY_DOWN;
+				} break;
+			}
+
+			if (move_cursor_key != KEY_UNKNOWN) {
+				k->set_scancode(move_cursor_key);
+				k->set_control(false);
+			}
+		}
+#endif
 
 		_reset_caret_blink_timer();
 
@@ -2601,15 +2625,6 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 				}
 				FALLTHROUGH;
 			}
-#ifdef APPLE_STYLE_KEYS
-			case KEY_B: {
-				if (!k->get_control()) {
-					scancode_handled = false;
-					break;
-				}
-				FALLTHROUGH;
-			}
-#endif
 			case KEY_LEFT: {
 
 				if (k->get_shift())
@@ -2686,15 +2701,6 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 				}
 				FALLTHROUGH;
 			}
-#ifdef APPLE_STYLE_KEYS
-			case KEY_F: {
-				if (!k->get_control()) {
-					scancode_handled = false;
-					break;
-				}
-				FALLTHROUGH;
-			}
-#endif
 			case KEY_RIGHT: {
 
 				if (k->get_shift())
@@ -2756,15 +2762,6 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 				}
 				FALLTHROUGH;
 			}
-#ifdef APPLE_STYLE_KEYS
-			case KEY_P: {
-				if (!k->get_control()) {
-					scancode_handled = false;
-					break;
-				}
-				FALLTHROUGH;
-			}
-#endif
 			case KEY_UP: {
 
 				if (k->get_alt()) {
@@ -2818,15 +2815,6 @@ void TextEdit::_gui_input(const Ref<InputEvent> &p_gui_input) {
 				}
 				FALLTHROUGH;
 			}
-#ifdef APPLE_STYLE_KEYS
-			case KEY_N: {
-				if (!k->get_control()) {
-					scancode_handled = false;
-					break;
-				}
-				FALLTHROUGH;
-			}
-#endif
 			case KEY_DOWN: {
 
 				if (k->get_alt()) {
