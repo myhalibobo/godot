@@ -3313,9 +3313,7 @@ void ScriptEditorPlugin::edit(Object *p_object) {
 		} else {
 			script_editor->edit(p_script);
 		}
-	}
-
-	if (Object::cast_to<TextFile>(p_object)) {
+	} else if (Object::cast_to<TextFile>(p_object)) {
 		script_editor->edit(Object::cast_to<TextFile>(p_object));
 	}
 }
