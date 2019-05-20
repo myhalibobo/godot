@@ -347,7 +347,7 @@ Map<int, TextEdit::HighlighterInfo> GDScriptSyntaxHighlighter::_get_line_syntax_
 	return color_map;
 }
 
-String GDScriptSyntaxHighlighter::get_name() {
+String GDScriptSyntaxHighlighter::get_name() const {
 	return "GDScript";
 }
 
