@@ -1566,7 +1566,15 @@ struct _ScriptEditorItemData {
 
 	bool operator<(const _ScriptEditorItemData &id) const {
 
-		return category == id.category ? sort_key < id.sort_key : category < id.category;
+		if (category == id.category) {
+			if (sort_key == id.sort_key) {
+				return index < id.index;
+			} else {
+				return sort_key < id.sort_key;
+			}
+		} else {
+			return category < id.category;
+		}
 	}
 };
 
