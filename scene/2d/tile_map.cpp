@@ -1608,33 +1608,30 @@ Vector2 TileMap::map_to_world(const Vector2 &p_pos, bool p_ignore_ofs) const {
 Vector2 TileMap::world_to_map(const Vector2 &p_pos) const {
 
 	Vector2 ret = get_cell_transform().affine_inverse().xform(p_pos);
-
 	switch (half_offset) {
-
 		case HALF_OFFSET_X: {
-			if (ret.y > 0 ? int(ret.y) & 1 : (int(ret.y) - 1) & 1) {
+			if (ret.y > 0 ? int(ret.y) & 1 : int(floor(ret.y)) & 1) {
 				ret.x -= 0.5;
 			}
 		} break;
 		case HALF_OFFSET_NEGATIVE_X: {
-			if (ret.y > 0 ? int(ret.y) & 1 : (int(ret.y) - 1) & 1) {
+			if (ret.y > 0 ? int(ret.y) & 1 : int(floor(ret.y)) & 1) {
 				ret.x += 0.5;
 			}
 		} break;
 		case HALF_OFFSET_Y: {
-			if (ret.x > 0 ? int(ret.x) & 1 : (int(ret.x) - 1) & 1) {
+			if (ret.x > 0 ? int(ret.x) & 1 : int(floor(ret.x)) & 1) {
 				ret.y -= 0.5;
 			}
 		} break;
 		case HALF_OFFSET_NEGATIVE_Y: {
-			if (ret.x > 0 ? int(ret.x) & 1 : (int(ret.x) - 1) & 1) {
+			if (ret.x > 0 ? int(ret.x) & 1 : int(floor(ret.x)) & 1) {
 				ret.y += 0.5;
 			}
 		} break;
 		default: {
 		}
 	}
-
 	// Account for precision errors on the border (GH-23250).
 	// 0.00005 is 5*CMP_EPSILON, results would start being unpredictable if
 	// cell size is > 15,000, but we can hardly have more precision anyway with
